@@ -5,11 +5,16 @@ const register = (app) => {
     const oidc = app.locals.oidc;
     // define a route handler for the default homepage
     app.get('/', (req, res) => {
-        res.send("hello world");
+        const user = req.userContext ? req.userContext.userinfo : null;
+        const content = {
+            isAuthenticated: req.isAuthenticated(),
+            user,
+        };
+        res.send(content);
     });
     // define a secure route handler for the login page that redirects to /guitars
     app.get("/login", oidc.ensureAuthenticated(), (req, res) => {
-        return res.redirect("/content");
+        res.redirect("/content");
     });
     // define a route to handle logout
     app.get("/logout", (req, res) => {
@@ -18,7 +23,12 @@ const register = (app) => {
     });
     // define a secure route handler for the guitars page
     app.get("/content", oidc.ensureAuthenticated(), (req, res) => {
-        res.send("content");
+        const user = req.userContext ? req.userContext.userinfo : null;
+        const content = {
+            isAuthenticated: req.isAuthenticated(),
+            user,
+        };
+        res.send(content);
     });
 };
 exports.register = register;
